@@ -1,0 +1,4 @@
+*.ini
+*.json
+__pycache__/*
+*.bkp
