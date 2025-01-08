@@ -9,7 +9,10 @@ from googleapiclient.errors import HttpError
 # If modifying these scopes, delete the file token.json.
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
 
-def api_call(spreadsheet_id="1AI2EqC73Z87U1Y47Fl068xvQnQXsZ85Yll3G7UKa1ps", range="General!A:B"):
+
+def api_call(
+    spreadsheet_id="1AI2EqC73Z87U1Y47Fl068xvQnQXsZ85Yll3G7UKa1ps", range="General!A:B"
+):
     creds = None
 
     if os.path.exists("token.json"):
@@ -22,22 +25,18 @@ def api_call(spreadsheet_id="1AI2EqC73Z87U1Y47Fl068xvQnQXsZ85Yll3G7UKa1ps", rang
             creds = flow.run_local_server(port=0)
         with open("token.json", "w") as token:
             token.write(creds.to_json())
-    
+
     try:
-        service = build("sheets", "v4", credentials = creds)
+        service = build("sheets", "v4", credentials=creds)
 
         sheet = service.spreadsheets()
-        result = (
-            sheet.values()
-            .get(spreadsheetId=spreadsheet_id, range=range)
-            .execute()
-        )
+        result = sheet.values().get(spreadsheetId=spreadsheet_id, range=range).execute()
         values = result.get("values", [])
 
         if not values:
             print("No data found")
             return
-        
+
         for row in values:
             if len(row) == 1:
                 row.append("")
@@ -45,6 +44,7 @@ def api_call(spreadsheet_id="1AI2EqC73Z87U1Y47Fl068xvQnQXsZ85Yll3G7UKa1ps", rang
 
     except HttpError as err:
         print(err)
+
 
 if __name__ == "__main__":
     movie_list = api_call()
